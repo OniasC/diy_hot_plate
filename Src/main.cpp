@@ -35,6 +35,7 @@
 #include "../api/u8g2/u8g2.h"
 #include "../app/menu/menu.h"
 #include "../app/menu/graph_lib/graph.h"
+#include "../app/hot_plate/hot_plate.h"
 
 #include "../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
 #include <cstdio>
@@ -58,20 +59,34 @@
 
 /* USER CODE BEGIN PV */
 
-void DoWork_FanSpeed()
-{
-    return;
-}
+itemName_t* itemNameList[6] = { (itemName_t*)"op1",
+                                (itemName_t*)"op2",
+                                (itemName_t*)"op3",
+                                (itemName_t*)"op4",
+                                (itemName_t*)"op5",
+                                (itemName_t*)"op6" };
 
-void DoWork_FanRpm()
-{
-    return;
-}
+itemName_t* itemNameList1[6] = { (itemName_t*)"1-op1",
+                                (itemName_t*)"1-op2",
+                                (itemName_t*)"1-op3",
+                                (itemName_t*)"1-op4",
+                                (itemName_t*)"1-op5",
+                                (itemName_t*)"1-back" };
 
-void DoWork_Temp()
-{
-    return;
-}
+itemName_t* itemNameList2[6] = { (itemName_t*)"2-op1",
+                                (itemName_t*)"2-op2",
+                                (itemName_t*)"2-op3",
+                                (itemName_t*)"2-op4",
+                                (itemName_t*)"2-op5",
+                                (itemName_t*)"2-back" };
+
+itemName_t* itemNameList3[6] = { (itemName_t*)"3-op1",
+                                (itemName_t*)"3-op2",
+                                (itemName_t*)"3-op3",
+                                (itemName_t*)"3-op4",
+                                (itemName_t*)"3-op5",
+                                (itemName_t*)"3-back" };
+
 
 #define bitmap_width 64
 #define bitmap_height 16
@@ -167,32 +182,6 @@ Thermistor* therm1 = new NTC_Thermistor(
     STM32_ANALOG_RESOLUTION // <- for a thermistor calibration
   );
 
-typedef enum hotPlateState {
-  hotPlateState_OFF = 0U,
-  hotPlateState_REFLOW = 1U,
-  hotPlateState_TRANSITION = 2U,
-  hotPlateState_COOLDOWN = 3U
-} hotPlateState_e;
-
-typedef enum {
-  selectedMode_0 = 0U,
-  selectedMode_1 = 1U,
-  selectedMode_2 = 2U,
-  selectedMode_3 = 3U
-} selectedMode_e;
-
-typedef struct {
-  float temp;
-  float second;
-} ReflowKeyPoint_t;
-
-typedef struct {
-  ReflowKeyPoint_t ramp;
-  ReflowKeyPoint_t soak;
-  ReflowKeyPoint_t reflow;
-  ReflowKeyPoint_t cooldown; //second here doesnt matter
-} TempProfile_t;
-
 unsigned int millis_before, millis_before_2;    //We use these to create the loop refresh rate
 unsigned int millis_now = 0;
 float refresh_rate = 500;                       //LCD refresh rate. You can change this if you want
@@ -200,15 +189,11 @@ float pid_refresh_rate  = 50;                   //PID Refresh rate
 float seconds = 0;                              //Variable used to store the elapsed time
 
 hotPlateState_e running_mode = hotPlateState_OFF;
-
 selectedMode_e selected_mode = selectedMode_0;
-int max_modes = 3;                              //For now, we only work with 1 mode...
 bool but_3_state = true;                        //Store the state of the button (HIGH OR LOW)
 bool but_4_state = true;                        //Store the state of the button (HIGH OR LOW)
 float temperature = 0;                          //Store the temperature value here
 
-static const TempProfile_t TempProfile_SAC305_LowDensity = {{150.0, 75.0},{175.0,135.0},{230.0,180.0},{40.0,400.0}};
-static const TempProfile_t TempProfile_SAC305_HighDensity = {{150.0, 90.0},{175.0,165.0},{230.0,225.0}, {40.0,400.0}};
 TempProfile_t selectedProfile;
 
 float temp_setpoint = 0;                        //Used for PID control
@@ -295,6 +280,7 @@ uint8_t u8x8_byte_sw_i2c_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *ar
 }
 
 static u8g2_t u8g2;
+static window_t* pCurrentWindow;
 
 void reflow(float temperature)
 {
@@ -609,7 +595,6 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
-  //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   BSP_buzzer_Init();
   BUZZER_play(&buzzer1);
@@ -643,47 +628,102 @@ int main(void)
     u8g2_DrawStr(&u8g2, 20, 10, "Hello World!");
     u8g2_DrawCircle(&u8g2, 30, 40, 10, U8G2_DRAW_ALL);
   } while (u8g2_NextPage(&u8g2));
-    //pinMode(SSR, OUTPUT);
+
 //    digitalWrite(SSR.pin, HIGH);        //Make sure we start with the SSR OFF (is off with HIGH)
   analogWrite(SSR,(uint32_t)0xFFFF);
-    //pinMode(buzzer, OUTPUT);
 //    digitalWrite(buzzer1.pwm.pin, LOW);
-    //pinMode(but_1, INPUT_PULLUP);
-    //pinMode(but_2, INPUT_PULLUP);
-    //pinMode(but_3, INPUT_PULLUP);
-    //pinMode(but_4, INPUT_PULLUP);
-    //pinMode(Thermistor_PIN, INPUT);
 
-    // initialize serial communication at 115200 bits per second:
-    //Serial.begin(115200);
-    //pinMode(0, OUTPUT);
 
 //   digitalWrite(SSR.pin, HIGH);        //Make sure we start with the SSR OFF (is off with HIGH)
   analogWrite(SSR,(uint32_t)0xFFFF);
     //set the resolution to 12 bits (0-4096)
     //analogReadResolution(12);
 
-    //pinMode(BUZZER_PIN, OUTPUT);
-    //BUZZER_Play_Pirates(&buzzer1);
-//    digitalWrite(&BUZZER_PIN, LOW);
-//    BUZZER_tone(&buzzer1, 1800, 2);
+
     delay(200);
-//    digitalWrite(&BUZZER_PIN, LOW);
     selectedProfile = TempProfile_SAC305_LowDensity;
     running_mode = hotPlateState_REFLOW;//ignores button selection at first
 
     millis_before = millis();
     millis_now = millis();
-    level_t normalM, fanM, fanSpeed, fanRpm, tempM, *currentM;
-    BuildMenu(&normalM,(char *)"Normal", 0, 0,&fanM, 0, 0);
-    BuildMenu(&fanM,(char *)"Fan Control", 0, &normalM, &tempM, 0, &fanSpeed);
-    BuildMenu(&fanSpeed,(char *)"Fan Speed", DoWork_FanSpeed, 0, &fanRpm, &fanM, 0);
-    BuildMenu(&fanRpm,(char *)"Fan RPM", DoWork_FanRpm, &fanSpeed, 0, &fanM , 0);
-    BuildMenu(&tempM,(char *)"Temperature", DoWork_Temp, &fanM,0, 0, 0);
 
-    //Assign the current menu item the first item in the menu
-    currentM = &normalM;
-    Next(&currentM);  //Check if there is a next node and then go there
+
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    window_t mainWindow, page2_window, page3_window;
+
+    memset(&mainWindow, 0, sizeof(0));
+
+    graphicalObject_t topBar = { 0 }, mainMenu = { 0 };
+
+    menuList_t menuList;
+    menuList.itemList = (itemName_t*)&itemNameList;
+    menuList.numItemList = 6;
+    menuList.maxNumDisplay = 4;
+    menuList.selectItem = 4;
+    menuList.selectItemPosition = 4;
+    strcpy_s(menuList.gObj.name, "Menu 0");
+
+    menuList_t menuList1;
+    menuList1.itemList = (itemName_t*)&itemNameList1;
+    menuList1.numItemList = 6;
+    menuList1.maxNumDisplay = 2;
+    menuList1.selectItem = 0;
+    menuList1.selectItemPosition = 0;
+    strcpy_s(menuList1.gObj.name, "Menu 1");
+
+    menuList_t menuList2;
+    menuList2.itemList = (itemName_t*)&itemNameList2;
+    menuList2.numItemList = 6;
+    menuList2.maxNumDisplay = 3;
+    menuList2.selectItem = 0;
+    menuList2.selectItemPosition = 0;
+    strcpy_s(menuList2.gObj.name, "Menu 2");
+
+    menuList_t menuList3;
+    menuList3.itemList = (itemName_t*)&itemNameList3;
+    menuList3.numItemList = 6;
+    menuList3.maxNumDisplay = 6;
+    menuList3.selectItem = 0;
+    menuList3.selectItemPosition = 0;
+    strcpy_s(menuList3.gObj.name, "Menu 3");
+
+    menuList.gObj.draw = print_list;
+    menuList.gObj.input = input_event_list;
+    menuList1.gObj.draw = print_list;
+    menuList1.gObj.input = input_event_list;
+    menuList2.gObj.draw = print_list;
+    menuList2.gObj.input = input_event_list;
+    menuList3.gObj.draw = print_list;
+    menuList3.gObj.input = input_event_list;
+
+    // menuList.numItemList should be == sizeof(subMenusFromMenu1) / sizeof(graphicalObject_t*);
+    graphicalObject_t* subMenusFromMenu0[6] = { &menuList1.gObj, &menuList2.gObj,&menuList3.gObj,
+                                                &menuList1.gObj,&menuList2.gObj,&menuList3.gObj };
+
+    graphicalObject_t* subMenusFromMenu1[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
+                                                &menuList.gObj,&menuList.gObj, &menuList.gObj };
+    graphicalObject_t* subMenusFromMenu2[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
+                                                &menuList.gObj,&menuList.gObj,&menuList.gObj };
+    graphicalObject_t* subMenusFromMenu3[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
+                                                &menuList.gObj,&menuList.gObj,&menuList.gObj };
+
+    menuList.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu0;
+    menuList1.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu1;
+    menuList2.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu2;
+    menuList3.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu3;
+
+    graphicalObject_t* pGObjArray[3] = { &topBar, &mainMenu, &menuList.gObj };
+    mainWindow.graphicalObjects = (graphicalObject_t**)&pGObjArray;
+    mainWindow.numGraphObjs = sizeof(pGObjArray) / sizeof(graphicalObject_t*);
+    mainWindow.selectedGraphObj = 2;
+    mainWindow.draw = print_window;
+    mainWindow.input = input_window;
+
+    pCurrentWindow = &mainWindow;
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -693,15 +733,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    //BUZZER_tone(&buzzer1, 1800, 200);
-    //BUZZER_tone(&buzzer1, 3600, 200);
-    //loop();
     //HAL_GPIO_TogglePin(led0_GPIO_Port, led0_Pin);
     //HAL_Delay(500);
-      //BUZZER_play(&buzzer1);
-      //analogRead(2);
-      //HAL_Delay(100);
-      loop();
+    //BUZZER_play(&buzzer1);
+    //analogRead(2);
+    //HAL_Delay(100);
+    loop();
 
       //analogWrite(SSR,(uint32_t)0xaaaa);           //We change the Duty Cycle applied to the SSR
   }

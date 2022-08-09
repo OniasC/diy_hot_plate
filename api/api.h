@@ -25,6 +25,15 @@
 
 #define max(a,b) a>=b? a : b
 #define min(a,b) a<=b? a : b
+
+#define container_of_c(ptr, type, member) ({                      \
+        const typeof( ((type *)0)->member ) *__mptr = (ptr);     \
+        (type *)( (char *)__mptr - offsetof(type,member) );      \
+        })
+
+#define container_of_cpp(ptr, type, member) (type*)((char*)(ptr) - offsetof(type, member))
+
+
 /*
  * how to add a new peripheral to the code:
  * - Create a folder that represents the high level object being created (i.e. imu, eeprom etc)

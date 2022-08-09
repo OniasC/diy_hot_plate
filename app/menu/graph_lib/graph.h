@@ -9,6 +9,7 @@
 #define APP_MENU_GRAPH_LIB_GRAPH_H_
 
 #include "main.h"
+#include "../../../api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,6 +17,7 @@ extern "C" {
 
 #define MAX_NAME_SIZE 16
 typedef uint8_t screenMaxPixelVal_t;
+typedef char* itemName_t;
 
 typedef enum{
   inputEvent_navigate,
@@ -50,6 +52,10 @@ typedef struct window {
   uint8_t numGraphObjs;
   uint8_t selectedGraphObj;
 } window_t;
+
+void print_window(struct window* window);
+
+void input_window(struct window* window, inputEvent_e input);
 
 #ifdef __cplusplus
 }
