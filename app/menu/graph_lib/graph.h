@@ -10,10 +10,14 @@
 
 #include "main.h"
 #include "../../../api/api.h"
+#include "../api/u8g2/u8g2.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define SCREEN_MAX_VERTICAL 64
+#define SCREEN_MAX_HORIZONTAL 128
 
 #define MAX_NAME_SIZE 16
 typedef uint8_t screenMaxPixelVal_t;
@@ -27,7 +31,7 @@ typedef enum{
 typedef struct {
   screenMaxPixelVal_t x;
   screenMaxPixelVal_t y;
-} point_t;
+} pixelCoord_t;
 
 
 typedef struct {
@@ -36,8 +40,8 @@ typedef struct {
 } dim_t;
 
 typedef struct graphicalObject {
-  point_t topLeft;
-  point_t botRight;
+  pixelCoord_t topLeft;
+  pixelCoord_t botRight;
   void(*draw)(struct graphicalObject* graphicalObject);
   void(*input)(struct graphicalObject** graphicalObject, inputEvent_e input, uint8_t index);
   struct graphicalObject* nextGraphObj;

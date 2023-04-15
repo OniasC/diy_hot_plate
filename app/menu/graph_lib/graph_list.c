@@ -7,10 +7,12 @@
 
 #include "graph_list.h"
 
+extern window_t* pCurrentWindow;
+
 void print_list(graphicalObject_t* arg1)
 {
     menuList_t* my_container;
-    my_container = container_of_cpp(arg1, struct menuList, gObj);
+    my_container = container_of(arg1, struct menuList, gObj);
 
     int maxIndex = 0;
     int round = 0;
@@ -24,7 +26,7 @@ void print_list(graphicalObject_t* arg1)
         round = 1;
     }
 
-    printf("MENU: %s\n", my_container->gObj.name);
+    //printf("MENU: %s\n", my_container->gObj.name);
 
     int k = 0;
     for (int i = my_container->selectItemPosition; i < maxIndex; i++)
@@ -38,7 +40,7 @@ void print_list(graphicalObject_t* arg1)
     {
         for (int i = 0; i < (my_container->maxNumDisplay - k); i++)
         {
-            printf("%s\n", my_container->itemList[i]);
+            //printf("%s\n", my_container->itemList[i]);
         }
     }
 }
@@ -46,11 +48,11 @@ void print_list(graphicalObject_t* arg1)
 void input_event_list(graphicalObject_t** arg1, inputEvent_e inputEvent, uint8_t index)
 {
     menuList_t* pMy_container;
-    pMy_container = container_of_cpp(*arg1, struct menuList, gObj);
+    pMy_container = container_of(*arg1, struct menuList, gObj);
 
     switch (inputEvent)
     {
-    case navigate:
+    case inputEvent_navigate:
         pMy_container->selectItem++;
         pMy_container->selectItemPosition++;
         if (pMy_container->selectItem >= pMy_container->numItemList)
@@ -59,16 +61,17 @@ void input_event_list(graphicalObject_t** arg1, inputEvent_e inputEvent, uint8_t
             pMy_container->selectItemPosition = 0;
         }
         break;
-    case select:
+    case inputEvent_select:
         for (uint8_t i = 0; i < pMy_container->numItemList; i++)
         {
-            printf("%s\n", pMy_container->nextGraphObjs[i]->name);
+            //printf("%s\n", pMy_container->nextGraphObjs[i]->name);
         }
         *arg1 = pMy_container->nextGraphObjs[pMy_container->selectItem];
 
         pCurrentWindow->graphicalObjects[index] = *arg1;
         break;
     default:
-        printf("ERROR\n\r");
+      break;
+        //printf("ERROR\n\r");
     }
 }

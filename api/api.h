@@ -13,6 +13,11 @@
 #include "string.h"
 #include <stdbool.h>
 #include <math.h>
+#include <stdio.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define API_TRUE 1U
 #define API_FALSE 0U
@@ -33,6 +38,11 @@
 
 #define container_of_cpp(ptr, type, member) (type*)((char*)(ptr) - offsetof(type, member))
 
+#ifdef __cplusplus
+#define container_of container_of_cpp
+#else
+#define container_of container_of_c
+#endif
 
 /*
  * how to add a new peripheral to the code:
@@ -51,7 +61,12 @@
  *
  * */
 
-/*
+
+typedef void SPI_HandleTypeDef;
+
+typedef SPI_HandleTypeDef hspi_t;
+
+ /*
  *structure to represent a gpio pin. Params are pin number and port number
  * */
 typedef struct {
@@ -88,6 +103,8 @@ typedef struct {
 	display_7seg_status_e 	display_7seg_state;
 } bsp_status_t;
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* API_API_H_ */

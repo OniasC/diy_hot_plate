@@ -33,8 +33,11 @@
 #include "../api/api_hal/api_hal.h"
 #include "../api/buzzer/buzzer.h"
 #include "../api/u8g2/u8g2.h"
-#include "../app/menu/menu.h"
+//#include "../api/thermocouple-k-type/max6675.h"
 #include "../app/menu/graph_lib/graph.h"
+#include "../app/menu/graph_lib/graph_list.h"
+#include "../app/menu/graph_lib/graph_text_bar.h"
+#include "../app/menu/graph_lib/graph_chart.h"
 #include "../app/hot_plate/hot_plate.h"
 
 #include "../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
@@ -58,6 +61,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+//max6675_t th1;
 
 itemName_t* itemNameList[6] = { (itemName_t*)"op1",
                                 (itemName_t*)"op2",
@@ -73,19 +77,6 @@ itemName_t* itemNameList1[6] = { (itemName_t*)"1-op1",
                                 (itemName_t*)"1-op5",
                                 (itemName_t*)"1-back" };
 
-itemName_t* itemNameList2[6] = { (itemName_t*)"2-op1",
-                                (itemName_t*)"2-op2",
-                                (itemName_t*)"2-op3",
-                                (itemName_t*)"2-op4",
-                                (itemName_t*)"2-op5",
-                                (itemName_t*)"2-back" };
-
-itemName_t* itemNameList3[6] = { (itemName_t*)"3-op1",
-                                (itemName_t*)"3-op2",
-                                (itemName_t*)"3-op3",
-                                (itemName_t*)"3-op4",
-                                (itemName_t*)"3-op5",
-                                (itemName_t*)"3-back" };
 
 
 #define bitmap_width 64
@@ -279,76 +270,18 @@ uint8_t u8x8_byte_sw_i2c_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *ar
   return 1;
 }
 
-static u8g2_t u8g2;
-static window_t* pCurrentWindow;
+u8g2_t u8g2;
+window_t* pCurrentWindow;
 
-void reflow(float temperature)
-{
-  float tangent = 0.0;
-  if(temperature < selectedProfile.ramp.temp || seconds < 90)
-  {
-    temp_setpoint = min(seconds*(float)selectedProfile.ramp.temp/selectedProfile.ramp.second, //Reach 150ºC till 90s (150/90=1.666)
-			selectedProfile.ramp.temp);
-  }
-  else if(((temperature > selectedProfile.ramp.temp) &&
-	   (temperature < selectedProfile.soak.temp)) &&
-	  ((seconds > selectedProfile.ramp.second) &&
-	   (seconds < selectedProfile.soak.second)))
-  {
-    tangent = (selectedProfile.soak.temp - selectedProfile.ramp.temp)/(selectedProfile.soak.second - selectedProfile.ramp.second);
-    temp_setpoint = selectedProfile.ramp.temp + (seconds - selectedProfile.ramp.second)*tangent;
-  }
-  else if(((temperature > selectedProfile.soak.temp) &&
-	   (temperature < selectedProfile.reflow.temp)) &&
-	  ((seconds > selectedProfile.soak.second) &&
-	   (seconds < selectedProfile.reflow.second)))
-  {
-      tangent = (selectedProfile.reflow.temp - selectedProfile.soak.temp)/(selectedProfile.reflow.second - selectedProfile.soak.second);
-      temp_setpoint = selectedProfile.soak.temp + (seconds - selectedProfile.soak.second)*tangent;
-  }
-  else if((temperature > selectedProfile.reflow.temp) ||
-	  ((seconds > selectedProfile.reflow.second)))
-  {
-      //digitalWrite(SSR.pin, HIGH);            //With HIGH the SSR is OFF
-      analogWrite(SSR,(uint32_t)0xFFFF);
 
-      temp_setpoint = 0.0;
-      running_mode = hotPlateState_TRANSITION;                  //Cooldown mode
-      return;
-  }
-  else
-  {
-      //I fell on some weird edge case that shouldn't happen..
-  }
-  //temp_setpoint = 200.0;
-
-  //Calculate PID
-  PID_ERROR = temp_setpoint - temperature;
-  PID_P = Kp*PID_ERROR;
-  PID_I = PID_I+(Ki*PID_ERROR);
-  PID_D = Kd * (PID_ERROR-PREV_ERROR);
-  PID_Output = PID_P + PID_I + PID_D;
-  //Define maximun PID values
-  if(PID_Output > MAX_PID_VALUE){
-    PID_Output = MAX_PID_VALUE;
-  }
-  else if (PID_Output < MIN_PID_VALUE){
-    PID_Output = MIN_PID_VALUE;
-  }
-  //Since the SSR is ON with LOW, we invert the pwm singal
-  pwm_value = 255 - PID_Output;
-
-  pwm_value = pwm_value*256; //0~255 to 0~(0xffff)
-
-  analogWrite(SSR,(uint32_t)pwm_value);           //We change the Duty Cycle applied to the SSR
-
-  PREV_ERROR = PID_ERROR;
-}
 
 void refreshDisplay()
 {
   millis_before = millis();
   seconds = seconds + (refresh_rate/1000);              //We count time in seconds
+
+/*
+
 
 
   u8g2_FirstPage(&u8g2);
@@ -360,10 +293,19 @@ void refreshDisplay()
     //u8g2_DrawVLine(&u8g2, 6, 11, 53);
     u8g2_DrawVLine(&u8g2, 6, 31, 33);
     u8g2_DrawHLine(&u8g2, 3, 60, 117);
-    u8g2_DrawStr(&u8g2, 5, 10, temp1);
+    //u8g2_DrawStr(&u8g2, 5, 10, temp1);
     sprintf(temp1, "%.1fC | %d  ", temp_setpoint, (int)running_mode);
-    u8g2_DrawStr(&u8g2, 5, 25, temp1);
+    //u8g2_DrawStr(&u8g2, 5, 25, temp1);
   } while ( u8g2_NextPage(&u8g2) );
+
+
+
+
+  //u8g2_ClearBuffer(&u8g2);
+  u8g2_DrawVLine(&u8g2, 6, 30, 62 - 25);
+  u8g2_DrawHLine(&u8g2, 3, 60, 117);
+  u8g2_SendBuffer(&u8g2);
+*/
 
   //Mode 0 is with SSR OFF (we can selcet mode with buttons)
   if(running_mode == 0){
@@ -376,18 +318,18 @@ void refreshDisplay()
     lcd.setCursor(9,0);
     lcd.print("SSR OFF"); */
 //      u8g2_ClearDisplay(&u8g2);
-    u8g2_FirstPage(&u8g2);
-    do {
-      u8g2_SetFont(&u8g2,u8g2_font_ncenB08_tr);
+/*    u8g2_FirstPage(&u8g2);
+//    do {
+//      u8g2_SetFont(&u8g2,u8g2_font_ncenB08_tr);
       //u8g2_DrawStr(&u8g2,0,24, "T: ");
       char temp1[30];
       sprintf(temp1, "T: %.2f|SSR: %.2f %%", temperature, ((float)SSR.htim->Instance->CCR1/(float)SSR.htim->Instance->ARR)*100);
-      u8g2_DrawVLine(&u8g2, 6, 11, 53);
-      u8g2_DrawHLine(&u8g2, 3, 60, 117);
+      //u8g2_DrawVLine(&u8g2, 6, 11, 53);
+      //u8g2_DrawHLine(&u8g2, 3, 60, 117);
 
       //u8g2_DrawStr(&u8g2, 5, 10, temp1);
     } while ( u8g2_NextPage(&u8g2) );
-
+*/
     //lcd.setCursor(0,1);
     int a=0;
     if(selected_mode == selectedMode_0){
@@ -455,106 +397,7 @@ void refreshDisplay()
 
 }
 
-void loop() {
-  //temperature = therm1.analog2temp();
-  temperature = (float)therm1->readCelsius();
-  //Serial.printf("%f\n", temperature);
-  delay(500);
-  millis_now = millis();
-  if((float)(millis_now - millis_before_2) > pid_refresh_rate)
-  {    //Refresh rate of the PID
-    millis_before_2 = millis();
 
-    //temperature = therm1.analog2temp();
-    //temperature = therm1.read();
-    temperature = (float)therm1->readCelsius();
-    if(running_mode == hotPlateState_REFLOW)
-    {
-      reflow(temperature);
-    }//End of running_mode = 1
-
-    //Mode 10 is between reflow and cooldown
-    if(running_mode == hotPlateState_TRANSITION){
-      //lcd.clear();
-      //lcd.setCursor(0,1);
-      //lcd.print("    COMPLETE    ");
-      u8g2_ClearDisplay(&u8g2);
-      u8g2_FirstPage(&u8g2);
-      do {
-        u8g2_SetFont(&u8g2,u8g2_font_ncenB14_tr);
-        u8g2_DrawStr(&u8g2,20, 10,"    COMPLETE   ");
-      } while ( u8g2_NextPage(&u8g2) );
-
-      BUZZER_tone((buzzer_t *)&buzzer1, (uint32_t)1800, (uint8_t)100);
-      seconds = 0;              //Reset timer
-      running_mode = hotPlateState_COOLDOWN;
-      delay(3000);
-    }
-  }//End of > millis_before_2 (Refresh rate of the PID code)
-
-
-
-  millis_now = millis();
-  if((float)(millis_now - millis_before)  > refresh_rate)
-  {          //Refresh rate of prntiong on the LCD
-    refreshDisplay();
-  }
-
-  ///////////////////////Button detection////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-  if(!digitalRead(&but_3) && but_3_state){
-    but_3_state = false;
-    selected_mode = (selectedMode_e)((uint8_t)selected_mode + 1U);
-    BUZZER_tone(&buzzer1, 2300, 40);
-    if(selected_mode > max_modes){
-      selected_mode = selectedMode_0;
-    }
-    delay(150);
-  }
-  else if(digitalRead(&but_3) && !but_3_state){
-    but_3_state = true;
-  }
-
-
-  ///////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////
-  if(!digitalRead(&but_4) && but_4_state)
-  {
-    if(running_mode == hotPlateState_REFLOW)
-    {
-      //digitalWrite(SSR.pin, HIGH);        //With HIGH the SSR is OFF
-      analogWrite(SSR,(uint32_t)0xFFFF);
-      running_mode = hotPlateState_OFF;
-      selected_mode = selectedMode_0;
-      BUZZER_tone(&buzzer1, 2500, 150);
-      delay(130);
-      BUZZER_tone(&buzzer1, 2200, 150);
-      delay(130);
-      BUZZER_tone(&buzzer1, 2000, 150);
-      delay(130);
-    }
-
-    but_4_state = false;
-    if(selected_mode == selectedMode_0){
-      running_mode = hotPlateState_OFF;
-    }
-    else if(selected_mode == selectedMode_1)
-    {
-      running_mode = hotPlateState_REFLOW;
-      BUZZER_tone(&buzzer1, 2000, 150);
-      delay(130);
-      BUZZER_tone(&buzzer1, 2200, 150);
-      delay(130);
-      BUZZER_tone(&buzzer1, 2400, 150);
-      delay(130);
-      seconds = 0;                    //Reset timer
-    }
-  }
-  else if(digitalRead(&but_4) && !but_4_state){
-    but_4_state = true;
-  }
-
-}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -595,19 +438,24 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   BSP_buzzer_Init();
   BUZZER_play(&buzzer1);
   //BUZZER_tone(&buzzer1, 1800, 200);
   //BUZZER_SetVolume(&buzzer1, (buzzer1.pwm.htim->Instance->ARR)/2);
-  u8g2_Setup_ssd1306_i2c_128x64_noname_1(&u8g2, U8G2_R0, u8x8_byte_sw_i2c_cb, u8x8_stm32_gpio_and_delay_cb);
+  //u8g2_Setup_ssd1306_i2c_128x64_noname_1(&u8g2, U8G2_R0, u8x8_byte_sw_i2c_cb, u8x8_stm32_gpio_and_delay_cb);
+  u8g2_Setup_ssd1306_i2c_128x64_noname_f(&u8g2, U8G2_R0, u8x8_byte_sw_i2c_cb, u8x8_stm32_gpio_and_delay_cb);
+
   u8g2_InitDisplay(&u8g2);
   u8g2_SetPowerSave(&u8g2, 0);
     //Define the pins as outputs or inputs
   HAL_TIM_PWM_Start(SSR.htim, SSR.Channel);
-
+  //io_pin_t max6675_cs = {Th1_Pin, Th1_GPIO_Port};
+  //thermocouple_max6675_ctor(&th1, &max6675_cs, &hspi1);
+  //MAX6675_initMeasure(&th1);
   //u8g2.begin();
-  delay(200);
+
   /*u8g2_FirstPage(&u8g2);
   do
   {
@@ -640,90 +488,110 @@ int main(void)
     //analogReadResolution(12);
 
 
-    delay(200);
-    selectedProfile = TempProfile_SAC305_LowDensity;
-    running_mode = hotPlateState_REFLOW;//ignores button selection at first
+  delay(200);
+  selectedProfile = TempProfile_SAC305_LowDensity;
+  running_mode = hotPlateState_REFLOW;//ignores button selection at first
+  //running_mode = hotPlateState_OFF;//ignores button selection at first
 
-    millis_before = millis();
-    millis_now = millis();
+  millis_before = millis();
+  millis_now = millis();
 
 
-    ////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////
-    window_t mainWindow, page2_window, page3_window;
+  ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////
+  window_t page1_window, page2_window;
 
-    memset(&mainWindow, 0, sizeof(0));
+  memset(&page1_window, 0, sizeof(window_t));
+  memset(&page2_window, 0, sizeof(window_t));
 
-    graphicalObject_t topBar = { 0 }, mainMenu = { 0 };
+  textBar_t topBar;
+  memset(&topBar, 0, sizeof(textBar_t));
+  topBar.gObj.topLeft = {1U , 1U};
+  topBar.gObj.botRight = {127U , 10U};
+  strcpy(topBar.gObj.name, "TopBar");
+  topBar.gObj.draw = print_textBar;
+  topBar.NumLines = 1U;
 
-    menuList_t menuList;
-    menuList.itemList = (itemName_t*)&itemNameList;
-    menuList.numItemList = 6;
-    menuList.maxNumDisplay = 4;
-    menuList.selectItem = 4;
-    menuList.selectItemPosition = 4;
-    strcpy_s(menuList.gObj.name, "Menu 0");
+  menuList_t menuList;
+  menuList.itemList = (itemName_t*)&itemNameList;
+  menuList.numItemList = 6;
+  menuList.maxNumDisplay = 4;
+  menuList.selectItem = 4;
+  menuList.selectItemPosition = 4;
+  strcpy(menuList.gObj.name, "Menu 0");
+  menuList.gObj.draw = print_list;
+  menuList.gObj.input = input_event_list;
 
-    menuList_t menuList1;
-    menuList1.itemList = (itemName_t*)&itemNameList1;
-    menuList1.numItemList = 6;
-    menuList1.maxNumDisplay = 2;
-    menuList1.selectItem = 0;
-    menuList1.selectItemPosition = 0;
-    strcpy_s(menuList1.gObj.name, "Menu 1");
+  menuList_t menuList1;
+  menuList1.itemList = (itemName_t*)&itemNameList1;
+  menuList1.numItemList = 6;
+  menuList1.maxNumDisplay = 2;
+  menuList1.selectItem = 0;
+  menuList1.selectItemPosition = 0;
+  strcpy(menuList1.gObj.name, "Menu 1");
+  menuList1.gObj.draw = print_list;
+  menuList1.gObj.input = input_event_list;
 
-    menuList_t menuList2;
-    menuList2.itemList = (itemName_t*)&itemNameList2;
-    menuList2.numItemList = 6;
-    menuList2.maxNumDisplay = 3;
-    menuList2.selectItem = 0;
-    menuList2.selectItemPosition = 0;
-    strcpy_s(menuList2.gObj.name, "Menu 2");
+  chart_t chart;
+  memset(&chart, 0, sizeof(chart_t));
+  chart.gObj.topLeft = {1U, 11U};
+  chart.gObj.botRight = {127U, 63U};
+  chart.gObj.draw = print_chart;
+  int16_t chart_xAxis[300];
+  int16_t chart_yAxis[300];
+  memset(chart_xAxis, 0, sizeof(chart_xAxis));
+  memset(chart_yAxis, 0, sizeof(chart_yAxis));
+  chart.xAxis = chart_xAxis;
+  chart.yAxis = chart_yAxis;
+  chart.numPoints = 300;
+  chart.arrayIndex = 0;
+  chart.maxCoordValue = {(int16_t)selectedProfile.cooldown.second, (int16_t)selectedProfile.reflow.temp};
+  chart.minCoordValue = {0,0};
 
-    menuList_t menuList3;
-    menuList3.itemList = (itemName_t*)&itemNameList3;
-    menuList3.numItemList = 6;
-    menuList3.maxNumDisplay = 6;
-    menuList3.selectItem = 0;
-    menuList3.selectItemPosition = 0;
-    strcpy_s(menuList3.gObj.name, "Menu 3");
+  chartLines_t chartTempProfile;
+  memset(&chartTempProfile, 0, sizeof(chartLines_t));
+  chartTempProfile.gObj.topLeft = {1U, 11U};
+  chartTempProfile.gObj.botRight = {127U, 63U};
+  chartTempProfile.gObj.draw = print_chartLines;
+  point_t chartProfilePoints[4];
+  memset(chartProfilePoints, 0, 4*sizeof(point_t));
+  chartProfilePoints[0] = {(int16_t)selectedProfile.ramp.second,    (int16_t)selectedProfile.ramp.temp};
+  chartProfilePoints[1] = {(int16_t)selectedProfile.soak.second,    (int16_t)selectedProfile.soak.temp};
+  chartProfilePoints[2] = {(int16_t)selectedProfile.reflow.second,  (int16_t)selectedProfile.reflow.temp};
+  chartProfilePoints[3] = {(int16_t)selectedProfile.cooldown.second,(int16_t)selectedProfile.cooldown.temp};
+  chartTempProfile.pointstToPlot = chartProfilePoints;
+  chartTempProfile.numPoints = 4;
+  chartTempProfile.maxCoordValue = {(int16_t)selectedProfile.cooldown.second, (int16_t)selectedProfile.reflow.temp};
+  chartTempProfile.minCoordValue = {0,0};
+  chartTempProfile.gObj.draw(&chartTempProfile.gObj);
 
-    menuList.gObj.draw = print_list;
-    menuList.gObj.input = input_event_list;
-    menuList1.gObj.draw = print_list;
-    menuList1.gObj.input = input_event_list;
-    menuList2.gObj.draw = print_list;
-    menuList2.gObj.input = input_event_list;
-    menuList3.gObj.draw = print_list;
-    menuList3.gObj.input = input_event_list;
+  // menuList.numItemList should be == sizeof(subMenusFromMenu1) / sizeof(graphicalObject_t*);
+  graphicalObject_t* subMenusFromMenu0[6] = { &menuList1.gObj, &menuList1.gObj,&menuList1.gObj,
+					      &menuList1.gObj,&menuList1.gObj,&menuList1.gObj };
 
-    // menuList.numItemList should be == sizeof(subMenusFromMenu1) / sizeof(graphicalObject_t*);
-    graphicalObject_t* subMenusFromMenu0[6] = { &menuList1.gObj, &menuList2.gObj,&menuList3.gObj,
-                                                &menuList1.gObj,&menuList2.gObj,&menuList3.gObj };
+  graphicalObject_t* subMenusFromMenu1[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
+					      &menuList.gObj,&menuList.gObj, &menuList.gObj };
 
-    graphicalObject_t* subMenusFromMenu1[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
-                                                &menuList.gObj,&menuList.gObj, &menuList.gObj };
-    graphicalObject_t* subMenusFromMenu2[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
-                                                &menuList.gObj,&menuList.gObj,&menuList.gObj };
-    graphicalObject_t* subMenusFromMenu3[6] = { &menuList.gObj, &menuList.gObj,&menuList.gObj,
-                                                &menuList.gObj,&menuList.gObj,&menuList.gObj };
+  menuList.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu0;
+  menuList1.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu1;
 
-    menuList.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu0;
-    menuList1.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu1;
-    menuList2.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu2;
-    menuList3.nextGraphObjs = (graphicalObject_t**)&subMenusFromMenu3;
+  graphicalObject_t* pGObjArray[2] = { &topBar.gObj, &menuList.gObj };
+  page1_window.graphicalObjects = (graphicalObject_t**)&pGObjArray;
+  page1_window.numGraphObjs = sizeof(pGObjArray) / sizeof(graphicalObject_t*);
+  page1_window.selectedGraphObj = 0;
+  page1_window.draw = print_window;
+  page1_window.input = input_window;
 
-    graphicalObject_t* pGObjArray[3] = { &topBar, &mainMenu, &menuList.gObj };
-    mainWindow.graphicalObjects = (graphicalObject_t**)&pGObjArray;
-    mainWindow.numGraphObjs = sizeof(pGObjArray) / sizeof(graphicalObject_t*);
-    mainWindow.selectedGraphObj = 2;
-    mainWindow.draw = print_window;
-    mainWindow.input = input_window;
+  pCurrentWindow = &page1_window;
+  ///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////
+  delay(400);
+  u8g2_ClearDisplay(&u8g2);
+  u8g2_SetFontMode(&u8g2, 0);
 
-    pCurrentWindow = &mainWindow;
-    ///////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////
-
+  chartTempProfile.gObj.draw(&chartTempProfile.gObj);
+  chart.draw = print_chart_NewPoint;
+  //u8g2_SendBuffer(&u8g2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -738,6 +606,17 @@ int main(void)
     //BUZZER_play(&buzzer1);
     //analogRead(2);
     //HAL_Delay(100);
+
+    pCurrentWindow->draw(pCurrentWindow);
+    if(seconds == uint16_t(seconds))
+    {
+      chart.draw(&chart, {(int16_t)seconds, (int16_t)temperature});
+      /*chart.xAxis[chart.arrayIndex] = (int16_t)seconds;
+      chart.yAxis[chart.arrayIndex] = (int16_t)temperature;
+      chart.arrayIndex++;
+      chart.gObj.draw(&chart.gObj);*/
+    }
+
     loop();
 
       //analogWrite(SSR,(uint32_t)0xaaaa);           //We change the Duty Cycle applied to the SSR

@@ -18,13 +18,13 @@ extern "C" {
 
 typedef struct menuList {
 	graphicalObject_t gObj; //referencenciando a ele mesmo
-	int selectItem;
-	int selectItemPosition;
+	uint8_t selectItem;
+	uint8_t selectItemPosition;
 	itemName_t* itemList;
 	graphicalObject_t** nextGraphObjs; //list of list of objects each item maps to.
 	//item0 -> *gObjs[0], item1 -> *gObjs[1], so on.
-	int numItemList;
-	int maxNumDisplay;
+	uint8_t numItemList;
+	uint8_t maxNumDisplay;
 } menuList_t;
 
 void print_list(graphicalObject_t* arg1);

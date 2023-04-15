@@ -9,7 +9,7 @@
 #define APP_HOT_PLATE_HOT_PLATE_H_
 
 #include "main.h"
-#include "../../../api/api.h"
+#include "../api/api.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,9 +41,13 @@ typedef struct {
     ReflowKeyPoint_t cooldown; //second here doesnt matter
 } TempProfile_t;
 
-static const TempProfile_t TempProfile_SAC305_LowDensity = { {150.0, 75.0},{175.0,135.0},{230.0,180.0},{40.0,400.0} };
-static const TempProfile_t TempProfile_SAC305_HighDensity = { {150.0, 90.0},{175.0,165.0},{230.0,225.0}, {40.0,400.0} };
+static const TempProfile_t TempProfile_SAC305_LowDensity = { {150.0, 75.0},{175.0,135.0},{230.0,180.0},{40.0,300.0} };
+static const TempProfile_t TempProfile_SAC305_HighDensity = { {150.0, 90.0},{175.0,165.0},{230.0,225.0}, {40.0,300.0} };
 
+
+void reflow(float temperature);
+
+void loop();
 
 #ifdef __cplusplus
 }
