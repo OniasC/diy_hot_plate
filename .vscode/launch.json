@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (ST-LINK)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/Debug/stm32_hot_plate.elf",
+      "servertype": "stlink",
+      "serverpath": "C:\\ST\\STM32CubeCLT_1.22.0\\STLink-gdb-server\\bin\\ST-LINK_gdbserver.exe",
+      "stm32cubeprogrammer": "C:\\ST\\STM32CubeCLT_1.22.0\\STM32CubeProgrammer\\bin",
+      "device": "STM32F103C8",
+      "interface": "swd",
+      "svdFile": "C:\\ST\\STM32CubeCLT_1.22.0\\STMicroelectronics_CMSIS_SVD\\STM32F103.svd",
+      "preLaunchTask": "CMake: build",
+      "runToEntryPoint": "main"
+    },
+    {
+      "name": "Debug (CMSIS-DAP / OpenOCD)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/Debug/stm32_hot_plate.elf",
+      "servertype": "openocd",
+      "configFiles": ["interface/cmsis-dap.cfg", "target/stm32f1x.cfg"],
+      "device": "STM32F103C8",
+      "svdFile": "C:\\ST\\STM32CubeCLT_1.22.0\\STMicroelectronics_CMSIS_SVD\\STM32F103.svd",
+      "runToEntryPoint": "main"
+    }
+  ]
+}
