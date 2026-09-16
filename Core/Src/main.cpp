@@ -1,18 +1,17 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.c
+  * @file           : main.cpp
   * @brief          : Main program body
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -28,19 +27,19 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../bsp/bsp.h"
-#include "../api/api_hal/api_hal_gpio.h"
-#include "../api/api_hal/api_hal.h"
-#include "../api/buzzer/buzzer.h"
-#include "../api/u8g2/u8g2.h"
-//#include "../api/thermocouple-k-type/max6675.h"
-#include "../app/menu/graph_lib/graph.h"
-#include "../app/menu/graph_lib/graph_list.h"
-#include "../app/menu/graph_lib/graph_text_bar.h"
-#include "../app/menu/graph_lib/graph_chart.h"
-#include "../app/hot_plate/hot_plate.h"
+#include "../../bsp/bsp.h"
+#include "../../api/api_hal/api_hal_gpio.h"
+#include "../../api/api_hal/api_hal.h"
+#include "../../api/buzzer/buzzer.h"
+#include "../../api/u8g2/u8g2.h"
+//#include "../../api/thermocouple-k-type/max6675.h"
+#include "../../app/menu/graph_lib/graph.h"
+#include "../../app/menu/graph_lib/graph_list.h"
+#include "../../app/menu/graph_lib/graph_text_bar.h"
+#include "../../app/menu/graph_lib/graph_chart.h"
+#include "../../app/hot_plate/hot_plate.h"
 
-#include "../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
+#include "../../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
 #include <cstdio>
 /* USER CODE END Includes */
 
@@ -436,9 +435,8 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C1_Init();
   MX_TIM1_Init();
-  MX_TIM2_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   BSP_buzzer_Init();
   BUZZER_play(&buzzer1);
@@ -661,9 +659,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_USB;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
   PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
-  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();

@@ -11,6 +11,9 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 
 # Define the build type
@@ -25,11 +28,11 @@ set(CMAKE_PROJECT_NAME stm32_hot_plate)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 # Core project settings
-project(${CMAKE_PROJECT_NAME})
+project(${CMAKE_PROJECT_NAME} C CXX ASM)
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Enable CMake support for ASM and C languages
-enable_language(C ASM)
+enable_language(C CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -42,14 +45,41 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+# u8g2 ships ~88 translation units; --gc-sections drops the unused display drivers
+file(GLOB U8G2_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/api/u8g2/*.c)
+
 # Add sources to executable
+# NOTE: Core/Src/main.cpp arrives via cmake/stm32cubemx, so it is not listed here.
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
+    api/api.c
+    api/Error_Report.c
+    api/interupts_callbacks.c
+    api/api_hal/api_hal.c
+    api/api_hal/api_hal_adc.c
+    api/api_hal/api_hal_gpio.c
+    api/api_hal/api_hal_pwm.c
+    api/buzzer/buzzer.c
+    api/gpio/gpio.c
+    api/led/led.c
+    api/NTC_Thermistor_hpp/NTC_Thermistor.cpp
+    app/hot_plate/hot_place.cpp
+    app/menu/graph_lib/graph.c
+    app/menu/graph_lib/graph_chart.c
+    app/menu/graph_lib/graph_list.c
+    app/menu/graph_lib/graph_text_bar.c
+    bsp/bsp.c
+    ${U8G2_SOURCES}
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user defined include paths
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/app          # lets graph.h resolve its "../api/u8g2/u8g2.h"
+    ${CMAKE_SOURCE_DIR}/api
+    ${CMAKE_SOURCE_DIR}/api/u8g2
+    ${CMAKE_SOURCE_DIR}/bsp
+    ${CMAKE_SOURCE_DIR}/app/hot_plate
+    ${CMAKE_SOURCE_DIR}/app/menu/graph_lib
 )
 
 # Add project symbols (macros)
@@ -65,4 +95,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
 
     # Add user defined libraries
+)
+
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O ihex   $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 )
