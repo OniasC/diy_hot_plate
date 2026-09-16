@@ -41,7 +41,7 @@ extern "C" {
  * error_e could be filled with all the errors to be more a succint way to report the errors
  * */
 #define DEBUG_STRING_BUFFER_SIZE 256
-char DEBUG_STRING[256];
+extern char DEBUG_STRING[DEBUG_STRING_BUFFER_SIZE];
 
 typedef enum {
 	NO_ERROR,

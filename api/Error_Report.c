@@ -8,6 +8,8 @@
 #include "api.h"
 #include "Error_Report.h"
 
+char DEBUG_STRING[DEBUG_STRING_BUFFER_SIZE];
+
 /*
  * initialize a variable that would tell, from the stuff that was innitialized what are the error report methods
  * availables: leds, 7seg_display, uart, lecd screen, etc
