@@ -465,13 +465,13 @@ int main(void)
   } while (u8g2_NextPage(&u8g2));*/
 
 
+  // Splash screen removed: u8g2_font_siji_t_6x10 costs 10.6 KB for a single glyph
+  // and helvR10 another 1.3 KB. ncenB08 (used by the text bar) is enough here.
   u8g2_FirstPage(&u8g2);
   do
   {
-    u8g2_SetFont(&u8g2, u8g2_font_siji_t_6x10);
-    u8g2_DrawGlyph(&u8g2, 0, 10, 57855);
-    u8g2_SetFont(&u8g2, u8g2_font_helvR10_tr);
-    u8g2_DrawStr(&u8g2, 20, 10, "Hello World!");
+    u8g2_SetFont(&u8g2, u8g2_font_ncenB08_tr);
+    u8g2_DrawStr(&u8g2, 20, 10, "Hot Plate");
     u8g2_DrawCircle(&u8g2, 30, 40, 10, U8G2_DRAW_ALL);
   } while (u8g2_NextPage(&u8g2));
 
