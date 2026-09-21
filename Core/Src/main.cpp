@@ -680,6 +680,8 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  TIM2->CCR1 = (uint32_t)0xFFFF;
+  TIM1->CCR1 = 0UL;
   while (1)
   {
   }
