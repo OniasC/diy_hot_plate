@@ -28,8 +28,8 @@ extern "C" {
 #define LOW 0U
 #define HIGH 1U
 
-#define max(a,b) a>=b? a : b
-#define min(a,b) a<=b? a : b
+#define max(a,b) (a>=b? a : b)
+#define min(a,b) (a<=b? a : b)
 
 #define container_of_c(ptr, type, member) ({                      \
         const typeof( ((type *)0)->member ) *__mptr = (ptr);     \
