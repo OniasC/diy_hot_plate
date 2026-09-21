@@ -98,7 +98,7 @@ void loop() {
         u8g2_DrawStr(&u8g2,20, 10,"    COMPLETE   ");
       } while ( u8g2_NextPage(&u8g2) );
 
-      BUZZER_tone((buzzer_t *)&buzzer1, (uint32_t)1800, (uint8_t)100);
+      BUZZER_tone((buzzer_t *)&buzzer1, (uint32_t)1800, (uint32_t)100);
       seconds = 0;              //Reset timer
       running_mode = hotPlateState_COOLDOWN;
       delay(3000);

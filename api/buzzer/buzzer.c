@@ -53,7 +53,7 @@ void BUZZER_SetVolume(buzzer_t * const buzzer, uint32_t volume)
 		buzzer->pwm.htim->Instance->CCR4 = volume; // vary the duty cycle
 }
 
-void BUZZER_tone(buzzer_t * const buzzer, uint32_t frequency, uint8_t durationSeconds)
+void BUZZER_tone(buzzer_t * const buzzer, uint32_t frequency, uint32_t durationMs)
 {
 	// meu clock eh 72MHz. Freq = 72MHz/(PRESCALER*ARR)
 	// meu ARR = 255, entao Freq = 282,352.9/PRESCALER ... PRESCALER = 282,352.9/Freq.
@@ -65,7 +65,7 @@ void BUZZER_tone(buzzer_t * const buzzer, uint32_t frequency, uint8_t durationSe
 	}
 	else
 		BUZZER_SetVolume(buzzer, 0);
-	} while ((HAL_GetTick() - currentTime) < durationSeconds*1000 );
+	} while ((HAL_GetTick() - currentTime) < durationMs );
 	BUZZER_SetVolume(buzzer, 0);
 	//HAL_TIM_PWM_Stop((buzzer->pwm.htim), buzzer->pwm.Channel);
 	//HAL_TIM_Base_DeInit(buzzer->pwm.htim);

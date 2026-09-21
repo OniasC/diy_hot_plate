@@ -28,7 +28,7 @@ void BUZZER_play(buzzer_t * const buzzer);
 
 void BUZZER_SetVolume(buzzer_t * const buzzer, uint32_t volume);
 
-void BUZZER_tone(buzzer_t * const buzzer, uint32_t frequency, uint8_t durationSeconds);
+void BUZZER_tone(buzzer_t * const buzzer, uint32_t frequency, uint32_t durationMs);
 
 void BUZZER_Play_Pirates(buzzer_t * const buzzer);
 
