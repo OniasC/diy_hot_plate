@@ -96,6 +96,9 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
+# newlib-nano omits float conversion from printf unless _printf_float is forced in
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -u _printf_float)
+
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
