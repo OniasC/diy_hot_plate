@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 # Enable CMake support for ASM and C languages
-enable_language(C CXX ASM)
+enable_language(C ASM)
 # STM32CubeMX generated symbols (macros)
-set(MX_Defines_Syms
-	USE_HAL_DRIVER
+set(MX_Defines_Syms 
+	USE_HAL_DRIVER 
 	STM32F103xB
     $<$<CONFIG:Debug>:DEBUG>
 )
@@ -11,18 +11,19 @@ set(MX_Defines_Syms
 # STM32CubeMX generated include paths
 set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Inc
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Inc
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/ST/STM32F1xx/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
 )
 
 # STM32CubeMX generated application sources
 set(MX_Application_Src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/iwdg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/tim.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/usart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32f1xx_it.c
@@ -35,23 +36,24 @@ set(MX_Application_Src
 # STM32 HAL/LL Drivers
 set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/system_stm32f1xx.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
-    C:/Users/OCASTELO/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.7/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
 )
 
 # Drivers Midllewares
@@ -63,10 +65,10 @@ set(MX_LINK_DIRS
 
 )
 # Project static libraries
-set(MX_LINK_LIBS
+set(MX_LINK_LIBS 
     STM32_Drivers
     ${TOOLCHAIN_LINK_LIBRARIES}
-
+    
 )
 # Interface library for includes and symbols
 add_library(stm32cubemx INTERFACE)
