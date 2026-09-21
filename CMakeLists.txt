@@ -40,6 +40,12 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
+# CubeMX rewrites cmake/stm32cubemx/CMakeLists.txt on every regeneration and always
+# lists Core/Src/main.c, the empty stub. Drop it here so the C++ main below wins.
+get_target_property(MX_SOURCES ${CMAKE_PROJECT_NAME} SOURCES)
+list(FILTER MX_SOURCES EXCLUDE REGEX "Core/Src/main\\.c$")
+set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY SOURCES ${MX_SOURCES})
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -49,8 +55,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 file(GLOB U8G2_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/api/u8g2/*.c)
 
 # Add sources to executable
-# NOTE: Core/Src/main.cpp arrives via cmake/stm32cubemx, so it is not listed here.
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    Core/Src/main.cpp
     api/api.c
     api/Error_Report.c
     api/interupts_callbacks.c
