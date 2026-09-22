@@ -10,7 +10,7 @@
 
 //#define SERIAL_DEBUG_MINIMAL
 
-#include "api.h"
+#include "platform/platform.h"
 
 #ifdef __cplusplus
 extern "C" {

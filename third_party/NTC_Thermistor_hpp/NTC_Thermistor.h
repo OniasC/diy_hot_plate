@@ -41,8 +41,6 @@
 #define NTC_THERMISTOR_H
 
 #include "../NTC_Thermistor_hpp/Thermistor.h"
-#include "../api.h"
-#include "../api_hal/api_hal.h"
 
 
 

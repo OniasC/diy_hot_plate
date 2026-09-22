@@ -51,11 +51,7 @@ typedef enum {
     RADIO_NO_ERROR,
 } radio_status_e; // improve this status enum when reading the datasheet and applications start happening
 
-typedef enum {
-    BUZZER_NOT_INIT,
-    BUZZER_NO_ERROR,
-    BUZZER_ERROR,
-} buzzer_status_e;
+
 
 typedef enum {
     JOYSTICK_NOT_INIT,
@@ -69,10 +65,5 @@ typedef enum {
     MOTOR_ERROR,
 } motor_status_e;
 
-typedef enum {
-    lED_NOT_INIT,
-    LED_NO_ERROR,
-    LED_ERROR,
-} led_status_e;
 
 #endif /* API_STATES_H_ */

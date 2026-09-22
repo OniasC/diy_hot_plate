@@ -5,9 +5,9 @@
  *      Author: onias
  */
 
-#include "main.h"
-#include "../api/api.h"
-#include "../bsp/bsp.h"
+
+#include "platform/platform.h"
+#include "board/bsp.h"
 
 /*
  * This function is application dependent!!!

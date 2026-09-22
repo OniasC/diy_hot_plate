@@ -7,6 +7,14 @@
 
 #include "gpio.h"
 
+__weak void digitalWrite(io_pin_t* const pin, uint8_t mode) {
+    HAL_GPIO_WritePin(pin->gpio_port, pin->gpio_pin, mode);
+}
+
+__weak uint8_t digitalRead(io_pin_t* const pin) {
+    return HAL_GPIO_ReadPin(pin->gpio_port, pin->gpio_pin);
+}
+
 void gpio_write(io_pin_t* const gpio, uint8_t value) {
     if ((value == 0U) || (value == 1U)) {
         HAL_GPIO_WritePin(gpio->gpio_port, gpio->gpio_pin, value);

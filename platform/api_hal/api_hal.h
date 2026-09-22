@@ -8,10 +8,9 @@
 #ifndef API_API_HAL_API_HAL_H_
 #define API_API_HAL_API_HAL_H_
 
-#include "../api.h"
+#include "../platform.h"
 #include "../api_hal/api_hal_adc.h"
-#include "../api_hal/api_hal_gpio.h"
-#include "api_hal_pwm.h"
+#include "../api_hal/api_hal_pwm.h"
 
 #ifdef __cplusplus
 extern "C" {

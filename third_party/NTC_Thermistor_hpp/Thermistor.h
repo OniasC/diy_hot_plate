@@ -21,7 +21,7 @@
 	#include <Arduino.h>
 #else
 //	#include <WProgram.h>
-	#include "../api/api_hal/api_hal.h"
+	#include "platform/api_hal/api_hal.h"
 #endif
 
 typedef float ntc_float_t;

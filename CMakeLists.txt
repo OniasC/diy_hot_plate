@@ -52,29 +52,27 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # u8g2 ships ~88 translation units; --gc-sections drops the unused display drivers
-file(GLOB U8G2_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/api/u8g2/*.c)
+file(GLOB U8G2_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/third_party/u8g2/*.c)
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/main.cpp
     Core/Src/fault_handler.c
-    api/api.c
     api/Error_Report.c
-    api/interupts_callbacks.c
-    api/api_hal/api_hal.c
-    api/api_hal/api_hal_adc.c
-    api/api_hal/api_hal_gpio.c
-    api/api_hal/api_hal_pwm.c
-    api/buzzer/buzzer.c
-    api/gpio/gpio.c
-    api/led/led.c
-    api/NTC_Thermistor_hpp/NTC_Thermistor.cpp
+    platform/interupts_callbacks.c
+    platform/api_hal/api_hal.c
+    platform/api_hal/api_hal_adc.c
+    platform/api_hal/api_hal_pwm.c
+    platform/buzzer/buzzer.c
+    platform/gpio/gpio.c
+    platform/led/led.c
+    third_party/NTC_Thermistor_hpp/NTC_Thermistor.cpp
     app/hot_plate/hot_place.cpp
-    app/menu/graph_lib/graph.c
-    app/menu/graph_lib/graph_chart.c
-    app/menu/graph_lib/graph_list.c
-    app/menu/graph_lib/graph_text_bar.c
-    bsp/bsp.c
+    ui/menu/graph_lib/graph.c
+    ui/menu/graph_lib/graph_chart.c
+    ui/menu/graph_lib/graph_list.c
+    ui/menu/graph_lib/graph_text_bar.c
+    board/bsp.c
     ${U8G2_SOURCES}
 )
 

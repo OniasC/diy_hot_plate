@@ -9,7 +9,10 @@
 #define API_GPIO_GPIO_H_
 
 #include "main.h"
-#include "../api.h"
+#include "../platform.h"
+
+__weak void digitalWrite(io_pin_t* const pin, uint8_t mode);
+__weak uint8_t digitalRead(io_pin_t* const pin);
 
 void gpio_write(io_pin_t* const gpio, uint8_t value);
 

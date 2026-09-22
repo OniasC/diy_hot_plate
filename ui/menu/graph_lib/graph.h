@@ -9,8 +9,8 @@
 #define APP_MENU_GRAPH_LIB_GRAPH_H_
 
 #include "main.h"
-#include "../../../api/api.h"
-#include "../api/u8g2/u8g2.h"
+#include "platform/platform.h"
+#include "third_party/u8g2/u8g2.h"
 
 #ifdef __cplusplus
 extern "C" {

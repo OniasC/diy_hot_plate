@@ -12,9 +12,14 @@
 extern "C" {
 #endif
 
-#include "../api.h"
-#include "../states.h"
+#include "../platform.h"
 #include "themes.h"
+
+typedef enum {
+    BUZZER_NOT_INIT,
+    BUZZER_NO_ERROR,
+    BUZZER_ERROR,
+} buzzer_status_e;
 
 typedef struct {
     pwm_t pwm;

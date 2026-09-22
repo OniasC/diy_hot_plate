@@ -1,5 +1,5 @@
 /*
- * graph.h
+ * hot_plate.h
  *
  *  Created on: Aug 8, 2022
  *      Author: onias
@@ -9,14 +9,14 @@
 #define APP_HOT_PLATE_HOT_PLATE_H_
 
 #include "main.h"
-#include "../api/api.h"
-#include "../api/buzzer/buzzer.h"
-#include "../api/api_hal/api_hal.h"
-#include "../api/u8g2/u8g2.h"
-#include "../../bsp/bsp.h"
+#include "platform/platform.h"
+#include "platform/buzzer/buzzer.h"
+#include "platform/api_hal/api_hal.h"
+#include "ui/menu/graph_lib/graph.h"
+#include "board/bsp.h"
 
 #ifdef __cplusplus
-#include "../api/NTC_Thermistor_hpp/Thermistor.h"
+#include "third_party/NTC_Thermistor_hpp/Thermistor.h"
 extern "C" {
 #endif
 

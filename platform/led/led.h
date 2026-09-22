@@ -8,9 +8,14 @@
 #ifndef API_LED_LED_H_
 #define API_LED_LED_H_
 
-#include "main.h"
-#include "../api.h"
-#include "../states.h"
+#include "../platform.h"
+
+
+typedef enum {
+    lED_NOT_INIT,
+    LED_NO_ERROR,
+    LED_ERROR,
+} led_status_e;
 
 typedef enum { LED_POLARITY_DIRECT = 0U, LED_POLARITY_INVERSE = 1U } led_polarity_e;
 

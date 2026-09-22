@@ -8,13 +8,13 @@
 #ifndef BSP_BSP_H_
 #define BSP_BSP_H_
 
-#include "../api/api.h"
+#include "platform/platform.h"
 
-#include "../api/gpio/gpio.h"
+#include "platform/gpio/gpio.h"
 
-#include "../api/Error_Report.h"
-#include "../api/led/led.h"
-#include "../api/buzzer/buzzer.h"
+#include "api/Error_Report.h"
+#include "platform/led/led.h"
+#include "platform/buzzer/buzzer.h"
 
 #ifdef __cplusplus
 extern "C" {

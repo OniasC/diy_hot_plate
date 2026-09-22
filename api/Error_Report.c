@@ -5,7 +5,7 @@
  *      Author: onias
  */
 
-#include "api.h"
+#include "platform/platform.h"
 #include "Error_Report.h"
 
 char DEBUG_STRING[DEBUG_STRING_BUFFER_SIZE];

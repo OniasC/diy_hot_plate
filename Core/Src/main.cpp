@@ -28,19 +28,19 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../../bsp/bsp.h"
-#include "../../api/api_hal/api_hal_gpio.h"
-#include "../../api/api_hal/api_hal.h"
-#include "../../api/buzzer/buzzer.h"
-#include "../../api/u8g2/u8g2.h"
-// #include "../../api/thermocouple-k-type/max6675.h"
-#include "../../app/menu/graph_lib/graph.h"
-#include "../../app/menu/graph_lib/graph_list.h"
-#include "../../app/menu/graph_lib/graph_text_bar.h"
-#include "../../app/menu/graph_lib/graph_chart.h"
-#include "../../app/hot_plate/hot_plate.h"
+#include "board/bsp.h"
+#include "platform/api_hal/api_hal.h"
+#include "platform/buzzer/buzzer.h"
 
-#include "../../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
+// #include "../../api/thermocouple-k-type/max6675.h"
+#include "ui/menu/graph_lib/graph.h"
+#include "ui/menu/graph_lib/graph_list.h"
+#include "ui/menu/graph_lib/graph_text_bar.h"
+#include "ui/menu/graph_lib/graph_chart.h"
+#include "app/hot_plate/hot_plate.h"
+
+#include "third_party/u8g2/u8g2.h"
+#include "third_party/NTC_Thermistor_hpp/NTC_Thermistor.h"
 #include "fault_handler.h"
 #include <cstdio>
 /* USER CODE END Includes */
@@ -344,7 +344,7 @@ void refreshDisplay() {
                                                          lcd.print(temperature,1);
                                                          lcd.setCursor(9,0);
                                                          lcd.print("SSR ON");
-                                             
+
                                                          lcd.setCursor(0,1);
                                                          lcd.print("S");  lcd.print(temp_setpoint,0);
                                                          lcd.setCursor(5,1);
@@ -352,7 +352,7 @@ void refreshDisplay() {
                                                          lcd.setCursor(12,1);
                                                          lcd.print(seconds,0);
                                                          lcd.print("s");
-                                             
+
                                                      */
     }                                                // End of running_mode == 1
 }

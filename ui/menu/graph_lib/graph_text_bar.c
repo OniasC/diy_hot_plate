@@ -7,7 +7,7 @@
 
 #include "graph_text_bar.h"
 
-#include "../../hot_plate/hot_plate.h"
+#include "app/hot_plate/hot_plate.h"
 
 extern u8g2_t u8g2;
 extern window_t* pCurrentWindow;
