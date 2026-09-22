@@ -23,38 +23,34 @@ extern "C" {
 typedef uint8_t screenMaxPixelVal_t;
 typedef char* itemName_t;
 
-typedef enum{
-  inputEvent_navigate,
-  inputEvent_select
-} inputEvent_e;
+typedef enum { inputEvent_navigate, inputEvent_select } inputEvent_e;
 
 typedef struct {
-  screenMaxPixelVal_t x;
-  screenMaxPixelVal_t y;
+    screenMaxPixelVal_t x;
+    screenMaxPixelVal_t y;
 } pixelCoord_t;
 
-
 typedef struct {
-  screenMaxPixelVal_t w;
-  screenMaxPixelVal_t h;
+    screenMaxPixelVal_t w;
+    screenMaxPixelVal_t h;
 } dim_t;
 
 typedef struct graphicalObject {
-  pixelCoord_t topLeft;
-  pixelCoord_t botRight;
-  void(*draw)(struct graphicalObject* graphicalObject);
-  void(*input)(struct graphicalObject** graphicalObject, inputEvent_e input, uint8_t index);
-  struct graphicalObject* nextGraphObj;
-  struct graphicalObject* prevGraphObj;
-  char name[MAX_NAME_SIZE];
+    pixelCoord_t topLeft;
+    pixelCoord_t botRight;
+    void (*draw)(struct graphicalObject* graphicalObject);
+    void (*input)(struct graphicalObject** graphicalObject, inputEvent_e input, uint8_t index);
+    struct graphicalObject* nextGraphObj;
+    struct graphicalObject* prevGraphObj;
+    char name[MAX_NAME_SIZE];
 } graphicalObject_t;
 
 typedef struct window {
-  void(*draw)(struct window* window);
-  void(*input)(struct window* window, inputEvent_e input);
-  graphicalObject_t** graphicalObjects;
-  uint8_t numGraphObjs;
-  uint8_t selectedGraphObj;
+    void (*draw)(struct window* window);
+    void (*input)(struct window* window, inputEvent_e input);
+    graphicalObject_t** graphicalObjects;
+    uint8_t numGraphObjs;
+    uint8_t selectedGraphObj;
 } window_t;
 
 void print_window(struct window* window);

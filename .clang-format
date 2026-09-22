@@ -1,0 +1,10 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 200
+PointerAlignment: Left
+#AlignConsecutiveMacros: Consecutive
+AllowShortFunctionsOnASingleLine: Empty
+SortIncludes: false          # include order here is load-bearing, see A3

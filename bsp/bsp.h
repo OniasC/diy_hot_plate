@@ -10,7 +10,6 @@
 
 #include "../api/api.h"
 
-
 #include "../api/gpio/gpio.h"
 
 #include "../api/Error_Report.h"
@@ -23,7 +22,7 @@ extern "C" {
 
 #define IRQ_NUM_USED 17
 #define JOYSTICK_NUM_ADC 2
-#define INTER_MCU_NUM_BYTES 18//9*2
+#define INTER_MCU_NUM_BYTES 18 // 9*2
 extern uint8_t interMcuCommsBuffer[INTER_MCU_NUM_BYTES];
 
 extern led_t led;

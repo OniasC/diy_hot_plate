@@ -5,21 +5,19 @@
  *      Author: onias
  */
 
-#include"api_hal.h"
+#include "api_hal.h"
 
-__weak void delayMicroseconds(uint32_t uSec)
-{
-	uint32_t uSecVar = uSec;
-	uSecVar = uSecVar* ((SystemCoreClock/1000000)/3);
-	while(uSecVar--);
+__weak void delayMicroseconds(uint32_t uSec) {
+    uint32_t uSecVar = uSec;
+    uSecVar = uSecVar * ((SystemCoreClock / 1000000) / 3);
+    while (uSecVar--)
+        ;
 }
 
-__weak void delay(uint32_t Delay)
-{
-	HAL_Delay(Delay);
+__weak void delay(uint32_t Delay) {
+    HAL_Delay(Delay);
 }
 
-__weak uint32_t millis(void)
-{
-	return HAL_GetTick();
+__weak uint32_t millis(void) {
+    return HAL_GetTick();
 }

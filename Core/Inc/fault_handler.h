@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 /* Returns 0 when no crash is recorded, otherwise fills the outputs. */
-uint32_t crash_log_read(uint32_t *pc, uint32_t *lr, uint32_t *cfsr);
+uint32_t crash_log_read(uint32_t* pc, uint32_t* lr, uint32_t* cfsr);
 
 void crash_log_clear(void);
 

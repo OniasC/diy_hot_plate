@@ -15,12 +15,12 @@ extern "C" {
 #endif
 
 typedef struct textBar {
-  graphicalObject_t gObj; //referencenciando a ele mesmo
-  uint8_t selectItem;
-  uint8_t selectItemPosition;
-  itemName_t* itemList;
-  uint8_t numItemList;
-  uint8_t NumLines;
+    graphicalObject_t gObj; // referencenciando a ele mesmo
+    uint8_t selectItem;
+    uint8_t selectItemPosition;
+    itemName_t* itemList;
+    uint8_t numItemList;
+    uint8_t NumLines;
 } textBar_t;
 
 void print_textBar(graphicalObject_t* arg1);
