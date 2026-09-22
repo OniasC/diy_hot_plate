@@ -6,10 +6,10 @@
 
 NTC_Thermistor::NTC_Thermistor(
 	const int pin,
-	const double referenceResistance,
-	const double nominalResistance,
-	const double nominalTemperatureCelsius,
-	const double bValue,
+	const ntc_float_t referenceResistance,
+	const ntc_float_t nominalResistance,
+	const ntc_float_t nominalTemperatureCelsius,
+	const ntc_float_t bValue,
 	const int adcResolution
 ) {
 	//pinMode(this->pin = pin, INPUT);
@@ -27,7 +27,7 @@ NTC_Thermistor::NTC_Thermistor(
 
 	@return temperature in Celsius.
 */
-double NTC_Thermistor::readCelsius() {
+ntc_float_t NTC_Thermistor::readCelsius() {
 	return kelvinsToCelsius(readKelvin());
 }
 
@@ -38,7 +38,7 @@ double NTC_Thermistor::readCelsius() {
 
 	@return temperature in Fahrenheit.
 */
-double NTC_Thermistor::readFahrenheit() {
+ntc_float_t NTC_Thermistor::readFahrenheit() {
 	return kelvinsToFahrenheit(readKelvin());
 }
 
@@ -49,38 +49,38 @@ double NTC_Thermistor::readFahrenheit() {
 
 	@return temperature in Kelvin.
 */
-double NTC_Thermistor::readKelvin() {
+ntc_float_t NTC_Thermistor::readKelvin() {
 	return resistanceToKelvins(readResistance());
 }
 
-inline double NTC_Thermistor::resistanceToKelvins(const double resistance) {
-	const double inverseKelvin = 1.0 / this->nominalTemperature +
+inline ntc_float_t NTC_Thermistor::resistanceToKelvins(const ntc_float_t resistance) {
+	const ntc_float_t inverseKelvin = 1.0 / this->nominalTemperature +
 		log(resistance / this->nominalResistance) / this->bValue;
 	return (1.0 / inverseKelvin);
 }
 
-inline double NTC_Thermistor::readResistance() {
-  double readVoltage;
+inline ntc_float_t NTC_Thermistor::readResistance() {
+  ntc_float_t readVoltage;
   uint32_t analog = analogRead((uint8_t)this->pin);
-  this->voltageReading = (double)analog/(double)this->adcResolution;
-  double resistance = this->referenceResistance / (1.0/this->voltageReading - 1.0);
+  this->voltageReading = (ntc_float_t)analog/(ntc_float_t)this->adcResolution;
+  ntc_float_t resistance = this->referenceResistance / (1.0/this->voltageReading - 1.0);
   return resistance;
 	//return this->referenceResistance / (this->adcResolution / readVoltage() - 1);
 }
 
-inline double NTC_Thermistor::readVoltage() {
+inline ntc_float_t NTC_Thermistor::readVoltage() {
 	return analogRead((uint8_t)this->pin)*3.3/0xFFFFF;
 }
 
-inline double NTC_Thermistor::celsiusToKelvins(const double celsius) {
+inline ntc_float_t NTC_Thermistor::celsiusToKelvins(const ntc_float_t celsius) {
 	return (celsius + 273.15);
 }
 
-inline double NTC_Thermistor::kelvinsToCelsius(const double kelvins) {
+inline ntc_float_t NTC_Thermistor::kelvinsToCelsius(const ntc_float_t kelvins) {
 	return (kelvins - 273.15);
 }
 
-inline double NTC_Thermistor::celsiusToFahrenheit(const double celsius) {
+inline ntc_float_t NTC_Thermistor::celsiusToFahrenheit(const ntc_float_t celsius) {
 	return (celsius * 1.8 + 32);
 }
 
@@ -91,6 +91,6 @@ inline double NTC_Thermistor::celsiusToFahrenheit(const double celsius) {
 	Then F = C * 1.8 + 32 is Celsius to Fahrenheit conversion.
 	=> Kelvin convert to Celsius, then Celsius to Fahrenheit.
 */
-inline double NTC_Thermistor::kelvinsToFahrenheit(const double kelvins) {
+inline ntc_float_t NTC_Thermistor::kelvinsToFahrenheit(const ntc_float_t kelvins) {
 	return celsiusToFahrenheit(kelvinsToCelsius(kelvins));
 }

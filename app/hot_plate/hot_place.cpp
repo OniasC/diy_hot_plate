@@ -94,7 +94,7 @@ void loop() {
       u8g2_ClearDisplay(&u8g2);
       u8g2_FirstPage(&u8g2);
       do {
-        u8g2_SetFont(&u8g2,u8g2_font_ncenB14_tr);
+        u8g2_SetFont(&u8g2,u8g2_font_ncenB08_tr);
         u8g2_DrawStr(&u8g2,20, 10,"    COMPLETE   ");
       } while ( u8g2_NextPage(&u8g2) );
 
@@ -109,7 +109,7 @@ void loop() {
 
   millis_now = millis();
   if((float)(millis_now - millis_before)  > refresh_rate)
-  {          //Refresh rate of prntiong on the LCD
+  {          //Refresh rate of printing on the LCD
     refreshDisplay();
   }
 

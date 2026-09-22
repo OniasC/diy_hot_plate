@@ -24,10 +24,12 @@
 	#include "../api/api_hal/api_hal.h"
 #endif
 
+typedef float ntc_float_t;
+
 class Thermistor {
 
 	public:
-  
+
 		/**
 			Destructor
 			Deletes Thermistor instance.
@@ -39,21 +41,21 @@ class Thermistor {
 
 			@return temperature in degree Celsius
 		*/
-		virtual double readCelsius() = 0;
+		virtual ntc_float_t readCelsius() = 0;
 
 		/**
 			Reads a temperature in Kelvin from the thermistor.
 
 			@return temperature in degree Kelvin
 		*/
-		virtual double readKelvin() = 0;
+		virtual ntc_float_t readKelvin() = 0;
 
 		/**
 			Reads a temperature in Fahrenheit from the thermistor.
 
 			@return temperature in degree Fahrenheit
 		*/
-		virtual double readFahrenheit() = 0;
+		virtual ntc_float_t readFahrenheit() = 0;
 };
 
 #endif

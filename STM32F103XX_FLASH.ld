@@ -226,6 +226,17 @@ SECTIONS
   PROVIDE( __bss_start = __tbss_start );
   PROVIDE( __bss_size = __bss_end - __bss_start );
 
+  /* Placed after .bss so the startup code never zeroes it, which lets the crash
+     log survive a warm reset (including a watchdog reset). */
+  .noinit (NOLOAD) : ALIGN(4)
+  {
+    _snoinit = .;
+    *(.noinit)
+    *(.noinit*)
+    . = ALIGN(4);
+    _enoinit = .;
+  } >RAM
+
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack (NOLOAD) :
   {

@@ -41,6 +41,7 @@
 #include "../../app/hot_plate/hot_plate.h"
 
 #include "../../api/NTC_Thermistor_hpp/NTC_Thermistor.h"
+#include "fault_handler.h"
 #include <cstdio>
 /* USER CODE END Includes */
 
@@ -79,7 +80,7 @@ itemName_t* itemNameList1[6] = { (itemName_t*)"1-op1",
 
 
 
-#define bitmap_width 64
+/*#define bitmap_width 64
 #define bitmap_height 16
 static unsigned char bitmap[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -146,7 +147,7 @@ static unsigned char bitmap[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
+};*/
 
 
 io_pin_t ssr_pin = {GPIO_PIN_15, GPIOA};
@@ -201,6 +202,8 @@ float Kd = 9;
 float PID_Output = 0;
 float PID_P, PID_I, PID_D;
 float PID_ERROR, PREV_ERROR;
+
+bool watchdog_reset = false;   /* set in main() before the profile is chosen */
 
 /* USER CODE END PV */
 
@@ -279,10 +282,7 @@ void refreshDisplay()
 {
   millis_before = millis();
   seconds = seconds + (refresh_rate/1000);              //We count time in seconds
-
 /*
-
-
 
   u8g2_FirstPage(&u8g2);
   do {
@@ -297,9 +297,6 @@ void refreshDisplay()
     sprintf(temp1, "%.1fC | %d  ", temp_setpoint, (int)running_mode);
     //u8g2_DrawStr(&u8g2, 5, 25, temp1);
   } while ( u8g2_NextPage(&u8g2) );
-
-
-
 
   //u8g2_ClearBuffer(&u8g2);
   u8g2_DrawVLine(&u8g2, 6, 30, 62 - 25);
@@ -355,8 +352,8 @@ void refreshDisplay()
   {//Mode 11 is cooldown. SSR is OFF
     if(temperature < selectedProfile.cooldown.temp)
     {
-	running_mode = hotPlateState_OFF;
-	BUZZER_tone(&buzzer1, 1000, 100);
+      running_mode = hotPlateState_OFF;
+      BUZZER_tone(&buzzer1, 1000, 100);
     }
     //digitalWrite(SSR.pin, HIGH);        //With HIGH the SSR is OFF
     analogWrite(SSR,(uint32_t)0xFFFF);
@@ -393,8 +390,6 @@ void refreshDisplay()
 
 */
   }//End of running_mode == 1
-
-
 }
 
 
@@ -421,7 +416,11 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+  /* Otherwise the watchdog keeps counting while halted at a breakpoint. */
+  DBGMCU->CR |= DBGMCU_CR_DBG_IWDG_STOP;
 
+  watchdog_reset = (RCC->CSR & RCC_CSR_IWDGRSTF) ? true : false;
+  RCC->CSR |= RCC_CSR_RMVF;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -490,7 +489,8 @@ int main(void)
 
   delay(200);
   selectedProfile = TempProfile_SAC305_LowDensity;
-  running_mode = hotPlateState_REFLOW;//ignores button selection at first
+  /* A watchdog reset means the loop hung mid-profile; do not resume heating. */
+  running_mode = watchdog_reset ? hotPlateState_OFF : hotPlateState_REFLOW;
   //running_mode = hotPlateState_OFF;//ignores button selection at first
 
   millis_before = millis();
@@ -601,6 +601,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    /* Kicked only from here: refreshing inside an ISR would defeat the point. */
+    HAL_IWDG_Refresh(&hiwdg);
+
     //HAL_GPIO_TogglePin(led0_GPIO_Port, led0_Pin);
     //HAL_Delay(500);
     //BUZZER_play(&buzzer1);

@@ -34,13 +34,33 @@ static void mapPlotToScreen2(chart_t* my_container, point_t *point)
 
 void print_chart_NewPoint(chart_t* myChart, point_t newPoint)
 {
-  myChart->arrayIndex++;
+  // need to check bounds of new Point.
+  if(myChart->arrayIndex + 1U >= myChart->numPoints) {
+    // roll back to start.
+    // probably some clean up is needed.
+    // log some clean up here
+    myChart->arrayIndex = 0;
+  }
   mapPlotToScreen2(myChart, &newPoint);
+
+  // clamping the result to the chart's bounding box
+  // log some behaviour here
+  if (newPoint.x <= myChart->gObj.topLeft.x) {
+    newPoint.x = myChart->gObj.topLeft.x;
+  } else if (newPoint.x >= myChart->gObj.botRight.x) {
+    newPoint.x = myChart->gObj.botRight.x;
+  }
+  if (newPoint.y <= myChart->gObj.topLeft.y) {
+    newPoint.y = myChart->gObj.topLeft.y;
+  } else if (newPoint.y >= myChart->gObj.botRight.y) {
+    newPoint.y = myChart->gObj.botRight.y;
+  }
   myChart->xAxis[myChart->arrayIndex] = newPoint.x;
   myChart->yAxis[myChart->arrayIndex] = newPoint.y;
 
  u8g2_DrawPixel(&u8g2, newPoint.x, newPoint.y);
  u8g2_SendBuffer(&u8g2);
+ myChart->arrayIndex++;
 }
 
 void print_chart(graphicalObject_t* arg1)

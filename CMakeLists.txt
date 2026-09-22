@@ -57,6 +57,7 @@ file(GLOB U8G2_SOURCES CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/api/u8g2/*.c)
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/main.cpp
+    Core/Src/fault_handler.c
     api/api.c
     api/Error_Report.c
     api/interupts_callbacks.c

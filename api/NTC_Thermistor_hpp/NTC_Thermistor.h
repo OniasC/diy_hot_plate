@@ -7,9 +7,9 @@
   Thermistor* thermistor = new NTC_Thermistor(A1, 8000, 100000, 25, 3950);
 
   Read temperature:
-    double celsius = thermistor->readCelsius();
-    double kelvin = thermistor->readKelvin();
-    double fahrenheit = thermistor->readFahrenheit();
+    ntc_float_t celsius = thermistor->readCelsius();
+    ntc_float_t kelvin = thermistor->readKelvin();
+    ntc_float_t fahrenheit = thermistor->readFahrenheit();
 
   v.1.1.2:
   - updated conversion from celsius to fahrenheit;
@@ -44,6 +44,8 @@
 #include "../api.h"
 #include "../api_hal/api_hal.h"
 
+
+
 class NTC_Thermistor : public Thermistor {
 
   private:
@@ -51,12 +53,12 @@ class NTC_Thermistor : public Thermistor {
     static const int DEFAULT_ADC_RESOLUTION = 1023;
 
     int pin; // an analog port.
-    double referenceResistance;
-    double nominalResistance;
-    double nominalTemperature; // in Celsius.
-    double bValue;
+    ntc_float_t referenceResistance;
+    ntc_float_t nominalResistance;
+    ntc_float_t nominalTemperature; // in Celsius.
+    ntc_float_t bValue;
     int adcResolution;
-    double voltageReading;
+    ntc_float_t voltageReading;
 
   public:
     /**
@@ -71,10 +73,10 @@ class NTC_Thermistor : public Thermistor {
     */
     NTC_Thermistor(
       int pin,
-      double referenceResistance,
-      double nominalResistance,
-      double nominalTemperatureCelsius,
-      double bValue,
+      ntc_float_t referenceResistance,
+      ntc_float_t nominalResistance,
+      ntc_float_t nominalTemperatureCelsius,
+      ntc_float_t bValue,
       int adcResolution = DEFAULT_ADC_RESOLUTION
     );
 
@@ -83,21 +85,21 @@ class NTC_Thermistor : public Thermistor {
 
       @return temperature in degree Celsius
     */
-    double readCelsius() override;
+    ntc_float_t readCelsius() override;
 
     /**
       Reads a temperature in Kelvin from the thermistor.
 
       @return temperature in degree Kelvin
     */
-    double readKelvin() override;
+    ntc_float_t readKelvin() override;
 
     /**
       Reads a temperature in Fahrenheit from the thermistor.
 
       @return temperature in degree Fahrenheit
     */
-    double readFahrenheit() override;
+    ntc_float_t readFahrenheit() override;
 
   private:
     /**
@@ -113,7 +115,7 @@ class NTC_Thermistor : public Thermistor {
       @param resistance - resistance value to convert
       @return temperature in degree Kelvin
     */
-    inline double resistanceToKelvins(double resistance);
+    inline ntc_float_t resistanceToKelvins(ntc_float_t resistance);
 
     /**
       Calculates a resistance of the thermistor:
@@ -126,14 +128,14 @@ class NTC_Thermistor : public Thermistor {
 
       @return resistance of the thermistor sensor.
     */
-    inline double readResistance();
+    inline ntc_float_t readResistance();
 
     /**
       Reads a voltage from the thermistor analog port.
 
       @return thermistor voltage in analog range (0...1023, for Arduino).
     */
-    inline double readVoltage();
+    inline ntc_float_t readVoltage();
 
     /**
       Celsius to Kelvin conversion:
@@ -142,7 +144,7 @@ class NTC_Thermistor : public Thermistor {
       @param celsius - temperature in degree Celsius to convert
       @return temperature in degree Kelvin
     */
-    inline double celsiusToKelvins(double celsius);
+    inline ntc_float_t celsiusToKelvins(ntc_float_t celsius);
 
     /**
       Kelvin to Celsius conversion:
@@ -151,7 +153,7 @@ class NTC_Thermistor : public Thermistor {
       @param kelvins - temperature in degree Kelvin to convert
       @return temperature in degree Celsius
     */
-    inline double kelvinsToCelsius(double kelvins);
+    inline ntc_float_t kelvinsToCelsius(ntc_float_t kelvins);
 
     /**
       Celsius to Fahrenheit conversion:
@@ -160,7 +162,7 @@ class NTC_Thermistor : public Thermistor {
       @param celsius - temperature in degree Celsius to convert
       @return temperature in degree Fahrenheit
     */
-    inline double celsiusToFahrenheit(double celsius);
+    inline ntc_float_t celsiusToFahrenheit(ntc_float_t celsius);
 
     /**
       Kelvin to Fahrenheit conversion:
@@ -169,7 +171,7 @@ class NTC_Thermistor : public Thermistor {
       @param kelvins - temperature in degree Kelvin to convert
       @return temperature in degree Fahrenheit
     */
-    inline double kelvinsToFahrenheit(double kelvins);
+    inline ntc_float_t kelvinsToFahrenheit(ntc_float_t kelvins);
 };
 
 #endif
